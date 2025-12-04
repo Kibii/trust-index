@@ -60,6 +60,33 @@
       font-size: 0.85rem;
       margin-top: 0.75rem;
     }
+    /* Make the evaluation matrix scroll horizontally on small screens */
+#matrix-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Ensure the table doesn't try to squish too small */
+.matrix-table {
+  min-width: 720px;
+}
+
+/* Optional: slightly smaller padding / font on small screens */
+@media (max-width: 640px) {
+  header {
+    padding: 1rem 1.25rem;
+  }
+  .page-section {
+    padding: 1rem 1.25rem 0.25rem;
+  }
+  .panel {
+    padding: 0.9rem;
+  }
+  .matrix-table th,
+  .matrix-table td {
+    padding: 0.35rem 0.3rem;
+  }
+}
     .matrix-table th,
     .matrix-table td {
       padding: 0.45rem 0.4rem;
@@ -77,6 +104,7 @@
       font-weight: 600;
       color: #111827;
     }
+    
 
     /* Availability pills */
     .availability-pill {
@@ -800,10 +828,12 @@
       }).join("");
 
       container.innerHTML = `
-        <table class="matrix-table">
-          <thead>${headerRow}</thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div class="matrix-wrapper">
+          <table class="matrix-table">
+            <thead>${headerRow}</thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
       `;
     }
 
