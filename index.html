@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trust Index Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f5f7;
+      color: #111827;
+    }
+    header {
+      padding: 1.5rem 2rem;
+      background: #0f172a;
+      color: white;
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+    header p {
+      margin: 0.2rem 0 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    main {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem 2rem;
+    }
+    @media (max-width: 960px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+    .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+    }
+    .panel h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+    }
+    .panel p {
+      margin: 0 0 0.75rem;
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+    .updates-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .update-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .update-item:last-child {
+      border-bottom: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.7rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #374151;
+      margin-right: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .badge-safety { background: #fee2e2; color: #b91c1c; }
+    .badge-bias { background: #e0f2fe; color: #1d4ed8; }
+    .badge-privacy { background: #ede9fe; color: #5b21b6; }
+    .badge-reliability { background: #ecfdf3; color: #166534; }
+    .badge-transparency { background: #fef3c7; color: #92400e; }
+    .badge-access { background: #f3e8ff; color: #6b21a8; }
+
+    .update-model {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .update-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .update-text {
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .model-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .model-pill {
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 0.83rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .model-pill span {
+      font-weight: 500;
+    }
+    .model-pill.active {
+      background: #0f172a;
+      color: white;
+      border-color: #0f172a;
+    }
+    .model-pill small {
+      font-size: 0.75rem;
+      opacity: 0.85;
+    }
+
+    .model-meta {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    .coverage-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+    }
+    .coverage-table th,
+    .coverage-table td {
+      padding: 0.45rem 0.4rem;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+    .coverage-table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #6b7280;
+    }
+    .coverage-cat {
+      font-weight: 600;
+      color: #111827;
+    }
+    .availability-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+    .avail-yes {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .avail-partial {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+    .avail-none {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .timeline {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 0.75rem;
+    }
+    .timeline h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.9rem;
+    }
+    .timeline-item {
+      margin-bottom: 0.5rem;
+    }
+    .timeline-item strong {
+      display: block;
+      font-size: 0.83rem;
+    }
+    .timeline-item span {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .timeline-item p {
+      margin: 0.15rem 0 0;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Trust Index – Prototype</h1>
+    <p>A dynamic overview of public trust evidence for major AI models (sample data).</p>
+  </header>
+
+  <main>
+    <!-- Left: Ecosystem update feed -->
+    <section class="panel">
+      <h2>Ecosystem Evidence Updates</h2>
+      <p>Recent trust-relevant disclosures and evaluations across models.</p>
+      <ul class="updates-list" id="updates"></ul>
+    </section>
+
+    <!-- Right: Per-model coverage map -->
+    <section class="panel">
+      <h2>Model Evidence Coverage</h2>
+      <p>Select a model to view its evidence coverage and timeline.</p>
+      <div class="model-list" id="model-list"></div>
+      <div id="model-details"></div>
+    </section>
+  </main>
+
+  <script>
+    // --- Sample data for the prototype ---
+    const data = {
+      models: [
+        {
+          id: "gpt-4-1",
+          name: "GPT-4.1",
+          provider: "OpenAI",
+          lastUpdated: "2025-08-02",
+          status: "Active",
+          coverage: [
+            {
+              category: "Safety & Harm Reduction",
+              key: "safety",
+              availability: "yes",
+              lastUpdate: "2025-06-15",
+              independence: "Partial",
+              notes: "System card and safety overview; internal red-teaming summary."
+            },
+            {
+              category: "Bias & Fairness",
+              key: "bias",
+              availability: "partial",
+              lastUpdate: "2025-05-10",
+              independence: "Partial",
+              notes: "Selective reporting on demographic bias; limited detail on methods."
+            },
+            {
+              category: "Privacy & Data Governance",
+              key: "privacy",
+              availability: "partial",
+              lastUpdate: "2025-04-20",
+              independence: "No",
+              notes: "High-level data provenance statements, no formal leakage evaluation published."
+            },
+            {
+              category: "Reliability & Truthfulness",
+              key: "reliability",
+              availability: "yes",
+              lastUpdate: "2025-08-02",
+              independence: "Yes",
+              notes: "Evaluated in HELM update; TruthfulQA and other benchmarks reported."
+            },
+            {
+              category: "Transparency & Versioning",
+              key: "transparency",
+              availability: "yes",
+              lastUpdate: "2025-06-15",
+              independence: "Partial",
+              notes: "System card with change log and high-level limitations."
+            },
+            {
+              category: "Independent Evaluation & Access",
+              key: "access",
+              availability: "partial",
+              lastUpdate: "2025-08-02",
+              independence: "Yes",
+              notes: "Evaluated in external benchmarks; API access constrained but present."
+            }
+          ],
+          timeline: [
+            {
+              date: "2025-08-02",
+              type: "Reliability",
+              categoryKey: "reliability",
+              summary: "HELM benchmark update reports GPT-4.1 performance on TruthfulQA and robustness tasks.",
+              source: "Stanford HELM"
+            },
+            {
+              date: "2025-06-15",
+              type: "Safety",
+              categoryKey: "safety",
+              summary: "OpenAI publishes GPT-4.1 system card describing red-teaming and harm mitigation.",
+              source: "OpenAI"
+            },
+            {
+              date: "2025-04-20",
+              type: "Privacy",
+              categoryKey: "privacy",
+              summary: "Updated data use and provenance statement for GPT-4.1.",
+              source: "OpenAI"
+            }
+          ]
+        },
+        {
+          id: "claude-3-5-sonnet",
+          name: "Claude 3.5 Sonnet",
+          provider: "Anthropic",
+          lastUpdated: "2025-09-10",
+          status: "Active",
+          coverage: [
+            {
+              category: "Safety & Harm Reduction",
+              key: "safety",
+              availability: "yes",
+              lastUpdate: "2025-09-10",
+              independence: "Yes",
+              notes: "Evaluated in a government-led frontier model safety pilot; strong focus on dangerous capabilities."
+            },
+            {
+              category: "Bias & Fairness",
+              key: "bias",
+              availability: "yes",
+              lastUpdate: "2025-05-20",
+              independence: "Partial",
+              notes: "Provider bias and fairness evaluation summary using BBQ-style questions and custom scenarios."
+            },
+            {
+              category: "Privacy & Data Governance",
+              key: "privacy",
+              availability: "partial",
+              lastUpdate: "2025-04-30",
+              independence: "No",
+              notes: "High-level statements on training data and redaction; limited formal leakage testing disclosed."
+            },
+            {
+              category: "Reliability & Truthfulness",
+              key: "reliability",
+              availability: "partial",
+              lastUpdate: "2025-06-05",
+              independence: "Partial",
+              notes: "Selected benchmarks on truthfulness and hallucination; methods partially described."
+            },
+            {
+              category: "Transparency & Versioning",
+              key: "transparency",
+              availability: "yes",
+              lastUpdate: "2025-04-30",
+              independence: "Partial",
+              notes: "Detailed model card with limitations and change log."
+            },
+            {
+              category: "Independent Evaluation & Access",
+              key: "access",
+              availability: "yes",
+              lastUpdate: "2025-09-10",
+              independence: "Yes",
+              notes: "Participated in external frontier safety evaluation; controlled access for research partners."
+            }
+          ],
+          timeline: [
+            {
+              date: "2025-09-10",
+              type: "Safety",
+              categoryKey: "safety",
+              summary: "Government AI safety institute publishes frontier model evaluation including Claude 3.5.",
+              source: "Gov AI Safety Institute"
+            },
+            {
+              date: "2025-06-05",
+              type: "Reliability",
+              categoryKey: "reliability",
+              summary: "Anthropic shares selected truthfulness and hallucination benchmark results.",
+              source: "Anthropic"
+            },
+            {
+              date: "2025-05-20",
+              type: "Bias",
+              categoryKey: "bias",
+              summary: "Bias and fairness evaluation summary released for Claude 3.5.",
+              source: "Anthropic"
+            },
+            {
+              date: "2025-04-30",
+              type: "Transparency",
+              categoryKey: "transparency",
+              summary: "Claude 3.5 model card published with training overview and limitations.",
+              source: "Anthropic"
+            }
+          ]
+        },
+        {
+          id: "gemini-2-0",
+          name: "Gemini 2.0",
+          provider: "Google DeepMind",
+          lastUpdated: "2025-07-18",
+          status: "Active",
+          coverage: [
+            {
+              category: "Safety & Harm Reduction",
+              key: "safety",
+              availability: "partial",
+              lastUpdate: "2025-07-18",
+              independence: "Partial",
+              notes: "Safety overview with qualitative red-teaming results, limited quantitative detail."
+            },
+            {
+              category: "Bias & Fairness",
+              key: "bias",
+              availability: "partial",
+              lastUpdate: "2025-05-01",
+              independence: "No",
+              notes: "Internal bias assessments summarized; methods not fully disclosed."
+            },
+            {
+              category: "Privacy & Data Governance",
+              key: "privacy",
+              availability: "partial",
+              lastUpdate: "2025-05-15",
+              independence: "No",
+              notes: "High-level privacy and data handling statements; no formal leakage benchmarks reported."
+            },
+            {
+              category: "Reliability & Truthfulness",
+              key: "reliability",
+              availability: "yes",
+              lastUpdate: "2025-07-18",
+              independence: "Yes",
+              notes: "Evaluated in external benchmark suites, including truthfulness and reasoning tasks."
+            },
+            {
+              category: "Transparency & Versioning",
+              key: "transparency",
+              availability: "partial",
+              lastUpdate: "2025-05-01",
+              independence: "No",
+              notes: "Basic model documentation; change log limited."
+            },
+            {
+              category: "Independent Evaluation & Access",
+              key: "access",
+              availability: "partial",
+              lastUpdate: "2025-07-18",
+              independence: "Yes",
+              notes: "Participates in limited external evaluations; research access available by application."
+            }
+          ],
+          timeline: [
+            {
+              date: "2025-07-18",
+              type: "Safety / Reliability",
+              categoryKey: "reliability",
+              summary: "External benchmark suite reports Gemini 2.0 results on multiple reasoning and truthfulness tasks.",
+              source: "External benchmark group"
+            },
+            {
+              date: "2025-05-15",
+              type: "Privacy",
+              categoryKey: "privacy",
+              summary: "Updated privacy and data use overview for Gemini models.",
+              source: "Google DeepMind"
+            },
+            {
+              date: "2025-05-01",
+              type: "Transparency / Bias",
+              categoryKey: "transparency",
+              summary: "Gemini 2.0 documentation updated with limited bias and safety details.",
+              source: "Google DeepMind"
+            }
+          ]
+        }
+      ]
+    };
+
+    const categoryBadgeClass = (key) => {
+      switch (key) {
+        case "safety": return "badge badge-safety";
+        case "bias": return "badge badge-bias";
+        case "privacy": return "badge badge-privacy";
+        case "reliability": return "badge badge-reliability";
+        case "transparency": return "badge badge-transparency";
+        case "access": return "badge badge-access";
+        default: return "badge";
+      }
+    };
+
+    const availClass = (availability) => {
+      if (availability === "yes") return "availability-pill avail-yes";
+      if (availability === "partial") return "availability-pill avail-partial";
+      return "availability-pill avail-none";
+    };
+
+    const availLabel = (availability) => {
+      if (availability === "yes") return "Evidence available";
+      if (availability === "partial") return "Partial evidence";
+      return "No public evidence";
+    };
+
+    // Build updates feed from all timeline events
+    function renderUpdates() {
+      const updatesEl = document.getElementById("updates");
+      const allEvents = [];
+
+      data.models.forEach((model) => {
+        model.timeline.forEach((event) => {
+          allEvents.push({
+            modelId: model.id,
+            modelName: model.name,
+            provider: model.provider,
+            date: event.date,
+            type: event.type,
+            categoryKey: event.categoryKey,
+            summary: event.summary,
+            source: event.source
+          });
+        });
+      });
+
+      // Sort descending by date
+      allEvents.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+      updatesEl.innerHTML = allEvents
+        .map((ev) => {
+          return `
+          <li class="update-item">
+            <div class="update-model">
+              ${ev.modelName} <span style="font-weight:400;color:#6b7280">· ${ev.provider}</span>
+            </div>
+            <div class="update-meta">
+              <span class="${categoryBadgeClass(ev.categoryKey)}">${ev.type}</span>
+              <span>${ev.date} · ${ev.source}</span>
+            </div>
+            <div class="update-text">
+              ${ev.summary}
+            </div>
+          </li>
+        `;
+        })
+        .join("");
+    }
+
+    function renderModelList(activeId) {
+      const listEl = document.getElementById("model-list");
+      listEl.innerHTML = data.models
+        .map((m) => {
+          const isActive = m.id === activeId;
+          return `
+          <button class="model-pill ${isActive ? "active" : ""}" data-id="${m.id}">
+            <span>${m.name}</span>
+            <small>(${m.provider})</small>
+          </button>
+        `;
+        })
+        .join("");
+
+      Array.from(listEl.querySelectorAll(".model-pill")).forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          renderModelList(id);
+          renderModelDetails(id);
+        });
+      });
+    }
+
+    function renderModelDetails(modelId) {
+      const model = data.models.find((m) => m.id === modelId);
+      const container = document.getElementById("model-details");
+      if (!model) {
+        container.innerHTML = "<p>No model selected.</p>";
+        return;
+      }
+
+      const rows = model.coverage
+        .map((c) => {
+          return `
+          <tr>
+            <td class="coverage-cat">${c.category}</td>
+            <td>
+              <span class="${availClass(c.availability)}">${availLabel(
+            c.availability
+          )}</span><br/>
+              <span style="font-size:0.8rem;color:#6b7280;">Last update: ${
+                c.lastUpdate || "—"
+              }</span>
+            </td>
+            <td>
+              <span style="font-size:0.8rem;color:#6b7280;">Independence: ${
+                c.independence
+              }</span><br/>
+              <span style="font-size:0.85rem;color:#374151;">${c.notes}</span>
+            </td>
+          </tr>
+        `;
+        })
+        .join("");
+
+      const timelineItems = model.timeline
+        .sort((a, b) => (a.date < b.date ? 1 : -1))
+        .map((t) => {
+          return `
+          <div class="timeline-item">
+            <strong>${t.date} · ${t.type}</strong>
+            <span>${t.source}</span>
+            <p>${t.summary}</p>
+          </div>
+        `;
+        })
+        .join("");
+
+      container.innerHTML = `
+        <div>
+          <div class="model-meta">
+            <strong>${model.name}</strong> · ${model.provider}<br/>
+            Last evidence update recorded: ${model.lastUpdated} · Status: ${model.status}
+          </div>
+          <table class="coverage-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Evidence</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+
+          <div class="timeline">
+            <h3>Evidence Timeline</h3>
+            ${timelineItems || "<p>No evidence items recorded yet.</p>"}
+          </div>
+        </div>
+      `;
+    }
+
+    // Initial render
+    (function init() {
+      renderUpdates();
+      const defaultModelId = data.models[0]?.id;
+      renderModelList(defaultModelId);
+      renderModelDetails(defaultModelId);
+    })();
+  </script>
+</body>
+</html>
+
