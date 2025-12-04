@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Trust Index Prototype</title>
+  <title>Trust Index – Prototype</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -31,22 +31,17 @@
       font-size: 0.9rem;
       opacity: 0.8;
     }
-    main {
-      display: grid;
-      grid-template-columns: 1.1fr 1.3fr;
-      gap: 1.5rem;
-      padding: 1.5rem 2rem 2rem;
+
+    .page-section {
+      padding: 1.5rem 2rem 0.5rem;
     }
-    @media (max-width: 960px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-    }
+
     .panel {
       background: white;
       border-radius: 12px;
       padding: 1.25rem;
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+      margin-bottom: 1.5rem;
     }
     .panel h2 {
       margin: 0 0 0.75rem;
@@ -57,6 +52,86 @@
       font-size: 0.9rem;
       color: #4b5563;
     }
+
+    /* Matrix */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+    }
+    .matrix-table th,
+    .matrix-table td {
+      padding: 0.45rem 0.4rem;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+    .matrix-table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #6b7280;
+    }
+    .matrix-domain {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Availability pills */
+    .availability-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+    .avail-yes {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .avail-partial {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+    .avail-none {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.7rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #374151;
+      margin: 0 0.25rem 0.25rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .badge-safety { background: #fee2e2; color: #b91c1c; }
+    .badge-bias { background: #e0f2fe; color: #1d4ed8; }
+    .badge-privacy { background: #ede9fe; color: #5b21b6; }
+    .badge-reliability { background: #ecfdf3; color: #166534; }
+    .badge-transparency { background: #fef3c7; color: #92400e; }
+    .badge-access { background: #f3e8ff; color: #6b21a8; }
+    .badge-flourish { background: #e0f2fe; color: #0369a1; }
+
+    /* Two-column layout for updates + model view */
+    .two-column {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 960px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .updates-list {
       list-style: none;
       padding: 0;
@@ -74,25 +149,6 @@
     .update-item:last-child {
       border-bottom: none;
     }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.7rem;
-      padding: 0.1rem 0.45rem;
-      border-radius: 999px;
-      background: #e5e7eb;
-      color: #374151;
-      margin-right: 0.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-    .badge-safety { background: #fee2e2; color: #b91c1c; }
-    .badge-bias { background: #e0f2fe; color: #1d4ed8; }
-    .badge-privacy { background: #ede9fe; color: #5b21b6; }
-    .badge-reliability { background: #ecfdf3; color: #166534; }
-    .badge-transparency { background: #fef3c7; color: #92400e; }
-    .badge-access { background: #f3e8ff; color: #6b21a8; }
-
     .update-model {
       font-weight: 600;
       font-size: 0.9rem;
@@ -164,25 +220,7 @@
       font-weight: 600;
       color: #111827;
     }
-    .availability-pill {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.12rem 0.45rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-    }
-    .avail-yes {
-      background: #dcfce7;
-      color: #166534;
-    }
-    .avail-partial {
-      background: #fef9c3;
-      color: #854d0e;
-    }
-    .avail-none {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
+
     .timeline {
       margin-top: 1rem;
       font-size: 0.85rem;
@@ -209,33 +247,130 @@
       font-size: 0.85rem;
       color: #374151;
     }
+
+    /* Domain cards */
+    .domain-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    @media (max-width: 1100px) {
+      .domain-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 768px) {
+      .domain-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+    .domain-card {
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      padding: 0.9rem 0.9rem 0.75rem;
+      background: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .domain-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .domain-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 0.25rem;
+    }
+    .domain-badges {
+      margin-bottom: 0.35rem;
+    }
+    .domain-models {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.2rem;
+    }
+    .domain-model-pill {
+      border-radius: 999px;
+      padding: 0.22rem 0.5rem;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 1px solid #e5e7eb;
+      background: white;
+    }
+    .domain-model-name {
+      font-weight: 500;
+      color: #111827;
+    }
+    .domain-model-provider {
+      font-size: 0.72rem;
+      color: #6b7280;
+    }
+    .domain-meta {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 0.2rem;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Trust Index – Prototype</h1>
-    <p>A dynamic aggregator of public trust evaluation benchmarks for AI models (sample data).</p>
+    <p>
+      A curated overview of AI Benchmarks for trust &amp; safety teams and regulators:
+      the latest evaluation benchmarks and standards, who is using them, and where evidence is missing.
+    </p>
   </header>
 
-  <main>
-    <!-- Left: Ecosystem update feed -->
+  <!-- Top: Evaluation landscape matrix -->
+  <section class="page-section">
     <section class="panel">
-      <h2>Latest Trust Evaluation Updates</h2>
-      <p>Recent trust-relevant disclosures and evaluations across AI models.</p>
-      <ul class="updates-list" id="updates"></ul>
+      <h2>Trustworthy AI Evaluation Landscape – At a Glance</h2>
+      <p>
+        This matrix highlights key evaluation domains, example benchmarks and standards, and where
+        major models currently have public evidence (sample data).
+      </p>
+      <div id="matrix-container"></div>
     </section>
+  </section>
 
-    <!-- Right: Per-model coverage map -->
+  <!-- Middle: Domain cards -->
+  <section class="page-section">
     <section class="panel">
-      <h2>Trust Evaluations by AI Model</h2>
-      <p>Select a model to view its latest trust and safety evaluations. Models updated Nov 2025.</p>
-      <div class="model-list" id="model-list"></div>
-      <div id="model-details"></div>
+      <h2>Evaluation Domains – What to Use, Where Gaps Are</h2>
+      <p>
+        Each domain aggregates relevant benchmarks and standards and shows which models report evaluations.
+        This helps AI teams and regulators decide <em>what</em> to evaluate next and <em>where</em> additional
+        reporting is needed.
+      </p>
+      <div class="domain-cards" id="domain-cards"></div>
     </section>
-  </main>
+  </section>
+
+  <!-- Bottom: Updates + per-model coverage -->
+  <section class="page-section">
+    <div class="two-column">
+      <section class="panel">
+        <h2>Recent Evidence Updates</h2>
+        <p>Trust- and wellbeing-relevant disclosures and evaluations across models.</p>
+        <ul class="updates-list" id="updates"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Model Evidence Coverage & Timeline</h2>
+        <p>Select a model to view its evidence coverage and timeline.</p>
+        <div class="model-list" id="model-list"></div>
+        <div id="model-details"></div>
+      </section>
+    </div>
+  </section>
 
   <script>
-    // --- Sample data for the prototype ---
+    // Sample data 
     const data = {
       models: [
         {
@@ -245,6 +380,14 @@
           lastUpdated: "2025-08-02",
           status: "Active",
           coverage: [
+            {
+              category: "Human Flourishing & Wellbeing",
+              key: "flourishing",
+              availability: "partial",
+              lastUpdate: "2025-07-10",
+              independence: "Partial",
+              notes: "Evaluated on Flourishing AI Benchmark (selected domains); limited public reporting."
+            },
             {
               category: "Safety & Harm Reduction",
               key: "safety",
@@ -267,7 +410,7 @@
               availability: "partial",
               lastUpdate: "2025-04-20",
               independence: "No",
-              notes: "High-level data provenance statements, no formal leakage evaluation published."
+              notes: "High-level data provenance statements; no formal leakage evaluation published."
             },
             {
               category: "Reliability & Truthfulness",
@@ -275,7 +418,7 @@
               availability: "yes",
               lastUpdate: "2025-08-02",
               independence: "Yes",
-              notes: "Evaluated in HELM update; TruthfulQA and other benchmarks reported."
+              notes: "Evaluated in HELM update; TruthfulQA and hallucination benchmarks reported."
             },
             {
               category: "Transparency & Versioning",
@@ -291,7 +434,7 @@
               availability: "partial",
               lastUpdate: "2025-08-02",
               independence: "Yes",
-              notes: "Evaluated in external benchmarks; API access constrained but present."
+              notes: "Evaluated in external benchmarks; constrained but present researcher access."
             }
           ],
           timeline: [
@@ -301,6 +444,13 @@
               categoryKey: "reliability",
               summary: "HELM benchmark update reports GPT-4.1 performance on TruthfulQA and robustness tasks.",
               source: "Stanford HELM"
+            },
+            {
+              date: "2025-07-10",
+              type: "Flourishing",
+              categoryKey: "flourishing",
+              summary: "Initial Flourishing AI Benchmark (FAI) run published for GPT-4.1 on selected wellbeing domains.",
+              source: "Independent research group"
             },
             {
               date: "2025-06-15",
@@ -325,6 +475,14 @@
           lastUpdated: "2025-09-10",
           status: "Active",
           coverage: [
+            {
+              category: "Human Flourishing & Wellbeing",
+              key: "flourishing",
+              availability: "partial",
+              lastUpdate: "2025-08-05",
+              independence: "Yes",
+              notes: "Evaluated on HumaneBench (psychological safety) and empathy-focused benchmarks; limited FAI reporting."
+            },
             {
               category: "Safety & Harm Reduction",
               key: "safety",
@@ -383,6 +541,13 @@
               source: "Gov AI Safety Institute"
             },
             {
+              date: "2025-08-05",
+              type: "Flourishing",
+              categoryKey: "flourishing",
+              summary: "HumaneBench results released for Claude 3.5, focusing on psychological wellbeing and emotional safety.",
+              source: "Independent research group"
+            },
+            {
               date: "2025-06-05",
               type: "Reliability",
               categoryKey: "reliability",
@@ -413,12 +578,20 @@
           status: "Active",
           coverage: [
             {
+              category: "Human Flourishing & Wellbeing",
+              key: "flourishing",
+              availability: "none",
+              lastUpdate: "",
+              independence: "No",
+              notes: "No public flourishing- or wellbeing-specific evaluations reported."
+            },
+            {
               category: "Safety & Harm Reduction",
               key: "safety",
               availability: "partial",
               lastUpdate: "2025-07-18",
               independence: "Partial",
-              notes: "Safety overview with qualitative red-teaming results, limited quantitative detail."
+              notes: "Safety overview with qualitative red-teaming results; limited quantitative detail."
             },
             {
               category: "Bias & Fairness",
@@ -488,7 +661,75 @@
       ]
     };
 
-    const categoryBadgeClass = (key) => {
+    // Domain definitions: what benchmarks and standards belong where
+    const domainDefinitions = {
+      flourishing: {
+        key: "flourishing",
+        label: "Human Flourishing & Wellbeing",
+        description:
+          "Evaluations of models' impact on wellbeing, relationships, psychological safety, and human flourishing outcomes.",
+        benchmarks: [
+          "Flourishing AI Benchmark (FAI)",
+          "HumaneBench",
+          "Empathy / relational support evaluations"
+        ],
+        standards: ["IEEE 7010 (Well-being)", "Wellbeing-aligned governance frameworks"]
+      },
+      safety: {
+        key: "safety",
+        label: "Safety & Harm Reduction",
+        description:
+          "Dangerous capabilities, misuse, abuse resistance, red-teaming, and safety institute evaluations.",
+        benchmarks: [
+          "Government frontier model evaluations",
+          "ARC Evals / red-teaming suites",
+          "Safety stress tests"
+        ],
+        standards: ["NIST AI RMF", "ISO/IEC 42001", "Emerging safety guidelines"]
+      },
+      bias: {
+        key: "bias",
+        label: "Bias & Fairness",
+        description:
+          "Demographic bias, stereotyping, differential performance across groups.",
+        benchmarks: ["BBQ", "CrowS-Pairs", "StereoSet"],
+        standards: ["EU AI Act fairness provisions", "Anti-discrimination law"]
+      },
+      privacy: {
+        key: "privacy",
+        label: "Privacy & Data Governance",
+        description:
+          "Data provenance, leakage, membership inference, retention and access controls.",
+        benchmarks: ["PII leakage tests", "Membership inference evaluations"],
+        standards: ["GDPR", "CCPA", "Data minimization and retention policies"]
+      },
+      reliability: {
+        key: "reliability",
+        label: "Reliability & Truthfulness",
+        description:
+          "Hallucination behavior, factuality, consistency, robustness under distribution shift.",
+        benchmarks: ["TruthfulQA", "HELM robustness / reliability suites"],
+        standards: ["Internal reliability thresholds", "Risk & quality management"]
+      },
+      transparency: {
+        key: "transparency",
+        label: "Transparency & Versioning",
+        description:
+          "Model and system cards, changelogs, limitation statements, documented behavioral shifts.",
+        benchmarks: ["Model card completeness", "System card depth"],
+        standards: ["Documentation best practices", "Transparency commitments"]
+      },
+      access: {
+        key: "access",
+        label: "Independent Evaluation & Access",
+        description:
+          "Whether independent researchers and public-interest institutions can meaningfully evaluate the model.",
+        benchmarks: ["External audits", "Research access programs"],
+        standards: ["DSA / EU AI Act access provisions", "Responsible disclosure norms"]
+      }
+    };
+
+    const badgeClassForDomain = (key) => {
       switch (key) {
         case "safety": return "badge badge-safety";
         case "bias": return "badge badge-bias";
@@ -496,6 +737,7 @@
         case "reliability": return "badge badge-reliability";
         case "transparency": return "badge badge-transparency";
         case "access": return "badge badge-access";
+        case "flourishing": return "badge badge-flourish";
         default: return "badge";
       }
     };
@@ -507,12 +749,141 @@
     };
 
     const availLabel = (availability) => {
-      if (availability === "yes") return "Evidence available";
-      if (availability === "partial") return "Partial evidence";
-      return "No public evidence";
+      if (availability === "yes") return "Evidence";
+      if (availability === "partial") return "Partial";
+      return "None";
     };
 
-    // Build updates feed from all timeline events
+    // ---- MATRIX ----
+    function renderMatrix() {
+      const container = document.getElementById("matrix-container");
+      const models = data.models;
+
+      // Collect all domain keys actually present
+      const domainKeys = Object.keys(domainDefinitions);
+
+      const headerRow = `
+        <tr>
+          <th>Domain</th>
+          <th>Key Benchmarks</th>
+          <th>Key Standards / Policy</th>
+          ${models.map((m) => `<th>${m.name}<br/><span style="font-weight:400;font-size:0.75rem;color:#6b7280;">${m.provider}</span></th>`).join("")}
+        </tr>
+      `;
+
+      const rows = domainKeys.map((key) => {
+        const def = domainDefinitions[key];
+        const domainLabel = def?.label || key;
+        const benchmarks = (def?.benchmarks || []).join(", ");
+        const standards = (def?.standards || []).join(", ");
+
+        const cells = models.map((model) => {
+          const cov = model.coverage.find((c) => c.key === key);
+          const availability = cov ? cov.availability : "none";
+          const lastUpdate = cov?.lastUpdate || "—";
+          return `
+            <td>
+              <span class="${availClass(availability)}">${availLabel(availability)}</span><br/>
+              <span style="font-size:0.75rem;color:#6b7280;">Updated: ${lastUpdate}</span>
+            </td>
+          `;
+        }).join("");
+
+        return `
+          <tr>
+            <td class="matrix-domain">${domainLabel}</td>
+            <td style="font-size:0.8rem;color:#374151;">${benchmarks || "—"}</td>
+            <td style="font-size:0.8rem;color:#374151;">${standards || "—"}</td>
+            ${cells}
+          </tr>
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        <table class="matrix-table">
+          <thead>${headerRow}</thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    // ---- DOMAIN CARDS ----
+    function renderDomainCards() {
+      const container = document.getElementById("domain-cards");
+      const domainMap = {};
+
+      data.models.forEach((model) => {
+        model.coverage.forEach((cov) => {
+          const key = cov.key;
+          if (!domainMap[key]) {
+            const def = domainDefinitions[key] || {};
+            domainMap[key] = {
+              key,
+              label: def.label || cov.category,
+              description: def.description || "",
+              benchmarks: def.benchmarks || [],
+              standards: def.standards || [],
+              models: []
+            };
+          }
+          domainMap[key].models.push({
+            modelId: model.id,
+            name: model.name,
+            provider: model.provider,
+            availability: cov.availability,
+            lastUpdate: cov.lastUpdate
+          });
+        });
+      });
+
+      const domains = Object.values(domainMap);
+
+      container.innerHTML = domains.map((d) => {
+        const benchmarkBadges = d.benchmarks.map((b) => `<span class="badge">${b}</span>`).join("");
+        const standardBadges = d.standards.map((s) => `<span class="badge">${s}</span>`).join("");
+
+        const modelPills = d.models.map((m) => {
+          const availabilityLabel = availLabel(m.availability);
+          const availabilityClass = availClass(m.availability);
+          return `
+            <div class="domain-model-pill">
+              <span class="domain-model-name">${m.name}</span>
+              <span class="domain-model-provider">${m.provider}</span>
+              <span class="${availabilityClass}" style="font-size:0.7rem;">${availabilityLabel}</span>
+            </div>
+          `;
+        }).join("");
+
+        const total = d.models.length;
+        const fullCount = d.models.filter((m) => m.availability === "yes").length;
+        const partialCount = d.models.filter((m) => m.availability === "partial").length;
+        const noneCount = d.models.filter((m) => m.availability === "none").length;
+
+        return `
+          <article class="domain-card">
+            <div>
+              <div class="domain-title">${d.label}</div>
+              <div class="domain-subtitle">${d.description}</div>
+            </div>
+            <div class="domain-badges">
+              ${benchmarkBadges}
+              ${standardBadges}
+            </div>
+            <div class="domain-models">
+              ${modelPills}
+            </div>
+            <div class="domain-meta">
+              <span>Total models: ${total}</span> ·
+              <span>Full: ${fullCount}</span> ·
+              <span>Partial: ${partialCount}</span> ·
+              <span>None: ${noneCount}</span>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    // ---- UPDATES FEED ----
     function renderUpdates() {
       const updatesEl = document.getElementById("updates");
       const allEvents = [];
@@ -532,18 +903,16 @@
         });
       });
 
-      // Sort descending by date
       allEvents.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-      updatesEl.innerHTML = allEvents
-        .map((ev) => {
-          return `
+      updatesEl.innerHTML = allEvents.map((ev) => {
+        return `
           <li class="update-item">
             <div class="update-model">
               ${ev.modelName} <span style="font-weight:400;color:#6b7280">· ${ev.provider}</span>
             </div>
             <div class="update-meta">
-              <span class="${categoryBadgeClass(ev.categoryKey)}">${ev.type}</span>
+              <span class="${badgeClassForDomain(ev.categoryKey)}">${ev.type}</span>
               <span>${ev.date} · ${ev.source}</span>
             </div>
             <div class="update-text">
@@ -551,23 +920,21 @@
             </div>
           </li>
         `;
-        })
-        .join("");
+      }).join("");
     }
 
+    // ---- MODEL LIST + DETAILS ----
     function renderModelList(activeId) {
       const listEl = document.getElementById("model-list");
-      listEl.innerHTML = data.models
-        .map((m) => {
-          const isActive = m.id === activeId;
-          return `
+      listEl.innerHTML = data.models.map((m) => {
+        const isActive = m.id === activeId;
+        return `
           <button class="model-pill ${isActive ? "active" : ""}" data-id="${m.id}">
             <span>${m.name}</span>
             <small>(${m.provider})</small>
           </button>
         `;
-        })
-        .join("");
+      }).join("");
 
       Array.from(listEl.querySelectorAll(".model-pill")).forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -586,42 +953,33 @@
         return;
       }
 
-      const rows = model.coverage
-        .map((c) => {
-          return `
+      const rows = model.coverage.map((c) => {
+        return `
           <tr>
             <td class="coverage-cat">${c.category}</td>
             <td>
-              <span class="${availClass(c.availability)}">${availLabel(
-            c.availability
-          )}</span><br/>
-              <span style="font-size:0.8rem;color:#6b7280;">Last update: ${
-                c.lastUpdate || "—"
-              }</span>
+              <span class="${availClass(c.availability)}">${availLabel(c.availability)}</span><br/>
+              <span style="font-size:0.8rem;color:#6b7280;">Last update: ${c.lastUpdate || "—"}</span>
             </td>
             <td>
-              <span style="font-size:0.8rem;color:#6b7280;">Independence: ${
-                c.independence
-              }</span><br/>
+              <span style="font-size:0.8rem;color:#6b7280;">Independence: ${c.independence}</span><br/>
               <span style="font-size:0.85rem;color:#374151;">${c.notes}</span>
             </td>
           </tr>
         `;
-        })
-        .join("");
+      }).join("");
 
       const timelineItems = model.timeline
         .sort((a, b) => (a.date < b.date ? 1 : -1))
         .map((t) => {
           return `
-          <div class="timeline-item">
-            <strong>${t.date} · ${t.type}</strong>
-            <span>${t.source}</span>
-            <p>${t.summary}</p>
-          </div>
-        `;
-        })
-        .join("");
+            <div class="timeline-item">
+              <strong>${t.date} · ${t.type}</strong>
+              <span>${t.source}</span>
+              <p>${t.summary}</p>
+            </div>
+          `;
+        }).join("");
 
       container.innerHTML = `
         <div>
@@ -637,9 +995,7 @@
                 <th>Details</th>
               </tr>
             </thead>
-            <tbody>
-              ${rows}
-            </tbody>
+            <tbody>${rows}</tbody>
           </table>
 
           <div class="timeline">
@@ -650,8 +1006,10 @@
       `;
     }
 
-    // Initial render
+    // ---- INIT ----
     (function init() {
+      renderMatrix();
+      renderDomainCards();
       renderUpdates();
       const defaultModelId = data.models[0]?.id;
       renderModelList(defaultModelId);
@@ -660,4 +1018,3 @@
   </script>
 </body>
 </html>
-
