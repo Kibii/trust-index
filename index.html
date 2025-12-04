@@ -402,6 +402,89 @@
     const data = {
       models: [
         {
+  id: "chatgpt-5",
+  name: "ChatGPT-5",
+  provider: "OpenAI",
+  lastUpdated: "2025-12-01",
+  status: "Active",
+  coverage: [
+    {
+      category: "Human Flourishing & Wellbeing",
+      key: "flourishing",
+      availability: "none",
+      lastUpdate: "",
+      independence: "No",
+      notes: "No published wellbeing or flourishing evaluations as of Dec 2025."
+    },
+    {
+      category: "Safety & Harm Reduction",
+      key: "safety",
+      availability: "partial",
+      lastUpdate: "2025-12-01",
+      independence: "Partial",
+      notes: "System card updated with high-level safety overview; limited quantitative benchmarks publicly available."
+    },
+    {
+      category: "Bias & Fairness",
+      key: "bias",
+      availability: "partial",
+      lastUpdate: "2025-12-01",
+      independence: "No",
+      notes: "High-level bias statements released; no detailed evaluations or demographic performance tables published."
+    },
+    {
+      category: "Privacy & Data Governance",
+      key: "privacy",
+      availability: "partial",
+      lastUpdate: "2025-12-01",
+      independence: "No",
+      notes: "Updated privacy policy and data-handling commitments; no formal leakage or membership inference results published."
+    },
+    {
+      category: "Reliability & Truthfulness",
+      key: "reliability",
+      availability: "partial",
+      lastUpdate: "2025-12-01",
+      independence: "Partial",
+      notes: "Some reliability claims made in marketing materials; no HELM or TruthfulQA datasets published yet."
+    },
+    {
+      category: "Transparency & Versioning",
+      key: "transparency",
+      availability: "partial",
+      lastUpdate: "2025-12-01",
+      independence: "No",
+      notes: "High-level model card exists, but changelog and limitation documentation remain incomplete."
+    },
+    {
+      category: "Independent Evaluation & Access",
+      key: "access",
+      availability: "none",
+      lastUpdate: "",
+      independence: "No",
+      notes: "No independent external evaluations published; research access program not yet open for this model."
+    }
+  ],
+  timeline: [
+    {
+      date: "2025-12-01",
+      type: "Launch",
+      categoryKey: "transparency",
+      summary: "ChatGPT-5 launched with updated system card; documentation incomplete across multiple evaluation domains.",
+      source: "OpenAI"
+    },
+    {
+      date: "2025-12-01",
+      type: "Safety",
+      categoryKey: "safety",
+      summary: "High-level safety overview released describing improvements but without quantitative benchmark results.",
+      source: "OpenAI"
+    }
+  ]
+},
+
+        {
+          
           id: "gpt-4-1",
           name: "GPT-4.1",
           provider: "OpenAI",
